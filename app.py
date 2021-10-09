@@ -1,13 +1,14 @@
-from flask import Flask, request
+from flask import Flask
 import requests
-import json
 import settings
-from bs4 import BeautifulSoup
-
 from app.comerce_parser.views import parser_bp
+from app.excel_validation.views import excel_validation_bp
 
 app = Flask(__name__)
+
 app.register_blueprint(parser_bp)
+app.register_blueprint(excel_validation_bp)
+
 
 def report_messages(chat_id, text):
     method = "sendMessage"
