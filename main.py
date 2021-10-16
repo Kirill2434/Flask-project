@@ -1,14 +1,30 @@
-from flask import Flask
+import os
+
 import requests
+from flask import Flask, request
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.utils import secure_filename
+
 from app.comerce_parser.views import parser_bp
 from app.excel_validation.views import excel_validation_bp
 from dotenv import load_dotenv
-import os
+
 
 app = Flask(__name__)
 
 app.register_blueprint(parser_bp)
 app.register_blueprint(excel_validation_bp)
+
+# Upload_file = open('C:\\Users\Кирилл\projects\Папка для файлов из бота')
+# Allowed_extensions = set(['xlsx'])
+# app.config['Upload_file'] = Upload_file
+
+db = SQLAlchemy(app)
+
+
+# def allowed_file(filename):
+#     return '.' in filename and \
+#            filename.rsplit('.', 1)[1] in Allowed_extensions
 
 
 def report_messages(chat_id, text):
@@ -29,9 +45,13 @@ def s_messege(chat_id, text='Результат получен'):
 
 
 @app.route("/", methods=["POST"])
-def dialog():
-    key = os.getenv("API_KEY")
-    return {"our_key": key}
+def upload_file():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['Upload_file'], filename))
+            return {"ok": True}
 
 
 if __name__ == "__main__":
