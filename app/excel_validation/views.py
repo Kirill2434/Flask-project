@@ -36,6 +36,8 @@ def load_def_fail():
     hours_1 = sheet.iter_rows(min_row=22, max_row=22, min_col=4, max_col=18, values_only=True)
     hours_2 = sheet.iter_rows(min_row=24, max_row=24, min_col=4, max_col=19, values_only=True)
     dictionary = dict(zip(*data_1, *hours_1))
+    dictionary_2 = dict(zip(*data_2, *hours_2))
+    dictionary.update(dictionary_2)
     print(mounth)
     print(surname)
     print(dictionary)
