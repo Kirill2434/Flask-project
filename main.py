@@ -15,16 +15,16 @@ app = Flask(__name__)
 app.register_blueprint(parser_bp)
 app.register_blueprint(excel_validation_bp)
 
-# Upload_file = open('C:\\Users\Кирилл\projects\Папка для файлов из бота')
-# Allowed_extensions = set(['xlsx'])
-# app.config['Upload_file'] = Upload_file
+Upload_file = 'C:\\Users\\Кирилл\\projects\\Папка для файлов из бота'
+Allowed_extensions = set(['xlsx'])
+app.config['Upload_file'] = Upload_file
 
 db = SQLAlchemy(app)
 
 
-# def allowed_file(filename):
-#     return '.' in filename and \
-#            filename.rsplit('.', 1)[1] in Allowed_extensions
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in Allowed_extensions
 
 
 def report_messages(chat_id, text):
