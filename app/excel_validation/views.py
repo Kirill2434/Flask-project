@@ -24,7 +24,7 @@ def making_dict():
     return {"ok": True}
 
 @excel_validation_bp.route("/get_file_check", methods=["POST"])
-def load_def_fail():
+def load_check_file():
     file = request.files['file2']
     wb = load_workbook(file)
     sheet = wb.active
