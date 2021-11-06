@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from flask import Blueprint, request
 
-parser_bp = Blueprint('parser', __name__, url_prefix='/parser')
+
 
 @parser_bp.route("/infoLMFC", methods=["POST"])
 def tikets():

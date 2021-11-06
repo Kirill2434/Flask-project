@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from openpyxl import load_workbook
 from flask import Blueprint, request
 
-excel_validation_bp = Blueprint('validation', __name__, url_prefix='/validation')
+from main import excel_validation
 
 @excel_validation_bp.route("/get_file", methods=["POST"])
 def making_dict():

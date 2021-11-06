@@ -4,13 +4,15 @@ import requests
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
-
-from app.comerce_parser.views import parser_bp
-from app.excel_validation.views import excel_validation_bp
+from flask import Blueprint
 from dotenv import load_dotenv
-
+from flask_migrate import Migrate
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+
+parser_bp = Blueprint('parser', __name__, url_prefix='/parser')
+excel_validation_bp = Blueprint('validation', __name__, url_prefix='/validation')
 
 app.register_blueprint(parser_bp)
 app.register_blueprint(excel_validation_bp)
@@ -20,6 +22,11 @@ Allowed_extensions = set(['xlsx'])
 app.config['Upload_file'] = Upload_file
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128))
 
 
 def allowed_file(filename):
