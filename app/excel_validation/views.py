@@ -21,11 +21,11 @@ def making_dict():
 
 @excel_validation_bp.route("/get_file_check", methods=["POST"])
 
+
 def get_hours_list():
     file = request.files['file2']
     wb = load_workbook(file)
     sheet = wb.active
-
     hours_list = []
     for row in range(22, 632, 4):
         hours_dict = {}
@@ -39,6 +39,7 @@ def get_hours_list():
         hours_dict['dictionary_2'] = dictionary_2
         hours_list.append(hours_dict)
     return hours_list
+
 
 def upd_to_float_dict(dictionary):
 
@@ -68,13 +69,13 @@ def upd_to_float_dict(dictionary):
         result_dict = {}
         result_dict.update(upd_dict_1)
         result_dict.update(upd_dict_2)
-        mounth = sheet.cell(row=10, column=33).value
-        surname = sheet.cell(row=21, column=2).value
-        print(mounth)
-        print(surname)
-        print(result_dict)
+        surname_d = {}
+        for row_s in range(21, 629, 4):
+            surname = sheet.cell(row=row_s + 4, column=2).value
+            surname_d[surname] = result_dict
+    print(surname_d)
 
-        return {"ok": True}
+    return {"ok": True}
 
 
 
