@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from flask import Blueprint, request
-
+from main import parser_bp
 
 
 @parser_bp.route("/infoLMFC", methods=["POST"])

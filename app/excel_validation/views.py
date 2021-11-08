@@ -1,8 +1,6 @@
-from datetime import datetime, timedelta
 from openpyxl import load_workbook
 from flask import Blueprint, request
-
-from main import excel_validation
+from main import excel_validation_bp
 
 @excel_validation_bp.route("/get_file", methods=["POST"])
 def making_dict():
