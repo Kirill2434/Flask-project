@@ -1,6 +1,7 @@
 from openpyxl import load_workbook
-from flask import Blueprint, request
-from main import excel_validation_bp
+from flask import Blueprint, Flask, request
+from main import excel_validation_bp, BasicTypeGraphic, CheckedTypeGraphic, db
+
 
 @excel_validation_bp.route("/get_file", methods=["POST"])
 def making_dict():
@@ -13,6 +14,9 @@ def making_dict():
     hours = sheet.iter_rows(min_row=5, max_row=5, min_col=5,  max_col=35, values_only=True)
     dictionary = dict(zip(*data, *hours))
     Float_dictinary = str(dictionary)
+    main_base = BasicTypeGraphic(main_date=data, hours=hours)
+    db.session.add(main_base)
+    db.session.commit()
     print(mounth)
     print(Float_dictinary)
     return {"ok": True}
@@ -37,8 +41,21 @@ def get_hours_list():
         hours_dict['dictionary_2'] = dictionary_2
         hours_list.append(hours_dict)
     return hours_list
-
-
+    hours_list = get_hours_list()
+    for hours_dict in hours_list:
+        upd_dict_1 = upd_to_float_dict(hours_dict['dictionary'])
+        upd_dict_2 = upd_to_float_dict(hours_dict['dictionary_2'])
+        result_dict = {}
+        result_dict.update(upd_dict_1)
+        result_dict.update(upd_dict_2)
+        surname_d = {}
+        for row_s in range(21, 629, 4):
+            surname = sheet.cell(row=row_s + 4, column=2).value
+            surname_d[surname] = result_dict
+    print(surname_d)
+    check_base = CheckedTypeGraphic(main_date=data, hours=hours)
+    db.session.add(check_base)
+    db.session.commit()
 def upd_to_float_dict(dictionary):
 
     upd_dict = {}
@@ -59,19 +76,6 @@ def upd_to_float_dict(dictionary):
                 new_value = new_value + i
         upd_dict[key] = float(new_value)
     return upd_dict
-
-    hours_list = get_hours_list()
-    for hours_dict in hours_list:
-        upd_dict_1 = upd_to_float_dict(hours_dict['dictionary'])
-        upd_dict_2 = upd_to_float_dict(hours_dict['dictionary_2'])
-        result_dict = {}
-        result_dict.update(upd_dict_1)
-        result_dict.update(upd_dict_2)
-        surname_d = {}
-        for row_s in range(21, 629, 4):
-            surname = sheet.cell(row=row_s + 4, column=2).value
-            surname_d[surname] = result_dict
-    print(surname_d)
 
     return {"ok": True}
 
