@@ -8,22 +8,36 @@ def making_dict():
     file = request.files['file']
     wb = load_workbook(file)
     sheet = wb.get_sheet_by_name('График ЗП')
-    mounth = sheet.cell(row=4, column=2).value
-
     data = sheet.iter_rows(min_row=4, max_row=4, min_col=5, max_col=35, values_only=True)
     hours = sheet.iter_rows(min_row=5, max_row=5, min_col=5,  max_col=35, values_only=True)
     dictionary = dict(zip(*data, *hours))
-    Float_dictinary = str(dictionary)
+
+    def upd_to_float_dict_1(dict_d):
+        upd_dict_1 = {}
+        for key, value in dict_d.items():
+            new_value = None
+
+            if value == "'" or value == "":
+                new_value = 0
+
+            if new_value != 0:
+                new_value = ''
+                for i in str(value):
+                    if i == ',':
+                        i = '.'
+                    new_value = new_value + i
+            upd_dict_1[str(key)] = float(new_value)
+
+        return upd_dict_1
+    # не видит первый словарь
+    correct_dictionary_base_file = upd_to_float_dict_1(dictionary)
     main_base = BasicTypeGraphic(main_date=data, hours=hours)
     db.session.add(main_base)
     db.session.commit()
-    print(mounth)
-    print(Float_dictinary)
     return {"ok": True}
 
+
 @excel_validation_bp.route("/get_file_check", methods=["POST"])
-
-
 def get_hours_list():
     file = request.files['file2']
     wb = load_workbook(file)
@@ -41,41 +55,51 @@ def get_hours_list():
         hours_dict['dictionary_2'] = dictionary_2
         hours_list.append(hours_dict)
     return hours_list
+
     hours_list = get_hours_list()
-    for hours_dict in hours_list:
-        upd_dict_1 = upd_to_float_dict(hours_dict['dictionary'])
-        upd_dict_2 = upd_to_float_dict(hours_dict['dictionary_2'])
-        result_dict = {}
+
+    def upd_to_float_dict_2(dictionary1):
+        upd_dict = {}
+        for key, value in dictionary1.items():
+            new_value = None
+
+            if value == 'X':
+                continue
+
+            if value == "'" or value == "":
+                new_value = 0
+
+            if new_value != 0:
+                new_value = ''
+                for i in str(value):
+                    if i == ',':
+                        i = '.'
+                    new_value = new_value + i
+            upd_dict[str(key)] = float(new_value)
+        return upd_dict
+
+    result_dict = {}
+    for hours_dict3 in hours_list:
+        upd_dict_1 = upd_to_float_dict_2(hours_dict3['dictionary'])
+        upd_dict_2 = upd_to_float_dict_2(hours_dict3['dictionary_2'])
         result_dict.update(upd_dict_1)
         result_dict.update(upd_dict_2)
-        surname_d = {}
-        for row_s in range(21, 629, 4):
-            surname = sheet.cell(row=row_s + 4, column=2).value
-            surname_d[surname] = result_dict
-    print(surname_d)
-    check_base = CheckedTypeGraphic(main_date=data, hours=hours)
-    db.session.add(check_base)
-    db.session.commit()
-def upd_to_float_dict(dictionary):
 
-    upd_dict = {}
-    for key, value in dictionary.items():
-        new_value = None
+    # добавление в базу
+        check_base = CheckedTypeGraphic(main_date=data, hours=hours)
+        db.session.add(check_base)
+        db.session.commit()
 
-        if value == 'X':
-            continue
+    # Сравниваем  словари
+    def comp_dicts(base_dict, check_dict):
+        for key, val in base_dict.items():
+            if val == check_dict[key]:
+                print('Ok', val, check_dict[key])
+            else:
+                print('Не совпало элементов:', val, check_dict[key])
+        return base_dict == check_dict
 
-        if value == "'" or value == "":
-            new_value = 0
-
-        if new_value != 0:
-            new_value = ''
-            for i in value:
-                if i == ',':
-                    i = '.'
-                new_value = new_value + i
-        upd_dict[key] = float(new_value)
-    return upd_dict
+    print(comp_dicts(correct_dictionary_base_file, result_dict))
 
     return {"ok": True}
 
