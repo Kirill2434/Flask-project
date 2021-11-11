@@ -1,42 +1,21 @@
-import os
-
-import requests
-from flask import Flask, request
-from flask_sqlalchemy import SQLAlchemy
-from werkzeug.utils import secure_filename
-from flask import Blueprint
 from dotenv import load_dotenv
+from flask import Flask
 from flask_migrate import Migrate
 
-parser_bp = Blueprint('parser_bp', __name__)
-excel_validation_bp = Blueprint('excel_validation_bp', __name__)
+from app.comerce_parser.views import parser_bp
+from app.excel_validation.views import validation_bp
+from models import db
 
-def creat_app():
-    app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app = Flask(__name__)
 
-    app.register_blueprint(parser_bp, url_prefix='/parser')
-    app.register_blueprint(excel_validation_bp, url_prefix='/validation')
-    return app
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+db.init_app(app)
+migrate = Migrate(app, db)
 
-db = SQLAlchemy()
+app.register_blueprint(parser_bp, url_prefix='/parser')
+app.register_blueprint(validation_bp, url_prefix='/validation')
 
-
-
-class BasicTypeGraphic(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    main_date = db.Column(db.String(32), nullable=True)
-    hours = db.Column(db.String(32), nullable=True)
-
-
-class CheckedTypeGraphic(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.String(32), nullable=True)
-    hours = db.Column(db.String(32), nullable=True)
-
-if __name__ == "__main__":
-    app = creat_app()
-    app.run()
-    load_dotenv()
+app.run()
+load_dotenv()
