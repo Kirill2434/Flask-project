@@ -1,3 +1,4 @@
+
 from openpyxl import load_workbook
 from flask import Blueprint, request
 
@@ -9,19 +10,19 @@ validation_bp = Blueprint('validation_bp', __name__)
 
 @validation_bp.route("/get_file", methods=["POST"])
 def making_dict():
+
     file = request.files['file']
     wb = load_workbook(file)
     sheet = wb.get_sheet_by_name('График ЗП')
     data = sheet.iter_rows(min_row=4, max_row=4, min_col=5, max_col=35, values_only=True)
     hours = sheet.iter_rows(min_row=5, max_row=5, min_col=5,  max_col=35, values_only=True)
     dictionary = dict(zip(*data, *hours))
-
-    # не видит первый словарь
     correct_dictionary_base_file = upd_to_float_dict_1(dictionary)
-
-    main_base = BasicTypeGraphic(main_date=data, hours=hours)
-    db.session.add(main_base)
-    db.session.commit()
+    print(correct_dictionary_base_file)
+    # добавление в базу
+    # main_base = BasicTypeGraphic(main_date=data, hours=hours)
+    # db.session.add(main_base)
+    # db.session.commit()
 
     return {"ok": True}
 
@@ -30,9 +31,8 @@ def making_dict():
 def get_hours_list():
     file = request.files['file']
     wb = load_workbook(file)
-    sheet = wb.active
+    sheet = wb.get_sheet_by_name('Лист1')
     hours_list = []
-
     for row in range(22, 632, 4):
         hours_dict = {}
 
@@ -47,15 +47,15 @@ def get_hours_list():
         hours_dict['dictionary'] = dictionary
         hours_dict['dictionary_2'] = dictionary_2
         hours_list.append(hours_dict)
-
         hours_list = get_hours_list()
-        result_dict = {}
-        for hours_dict3 in hours_list:
-            upd_dict_1 = upd_to_float_dict_2(hours_dict3['dictionary'])
-            upd_dict_2 = upd_to_float_dict_2(hours_dict3['dictionary_2'])
+        for hours_dict in hours_list:
+            result_dict = {}
+            upd_dict_1 = upd_to_float_dict_2(hours_dict['dictionary'])
+            upd_dict_2 = upd_to_float_dict_2(hours_dict['dictionary_2'])
             result_dict.update(upd_dict_1)
             result_dict.update(upd_dict_2)
 
-            # TODO: Вытащить из базы запись по дефолтному файлу
+        Basic_record_from_base = BasicTypeGraphic.query.all()
+        #Дальше функция с проверкой из utilits
 
     return hours_list

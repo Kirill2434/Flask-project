@@ -18,7 +18,7 @@ def upd_to_float_dict_1(dict_d):
     return upd_dict_1
 
 
-def upd_to_float_dict_2(dictionary1):
+def upd_to_float_dict_2(dictionary1) -> object:
     upd_dict = {}
     for key, value in dictionary1.items():
         new_value = None
