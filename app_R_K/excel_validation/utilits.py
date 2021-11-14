@@ -1,3 +1,4 @@
+# from app_R_K.excel_validation.views import surname_list
 
 def upd_to_float_dict_1(dict_d):
     upd_dict_1 = {}
@@ -40,10 +41,14 @@ def upd_to_float_dict_2(dictionary1) -> object:
 
 
 # Сравниваем  словари
-def comp_dicts(base_dict, check_dict):
-    for key, val in base_dict.items():
-        if val == check_dict[key]:
-            print('Ok', val, check_dict[key])
-        else:
-            print('Не совпало элементов:', val, check_dict[key])
-    return base_dict == check_dict
+def comparison_of_dictionaries(base_dict, checking_dict):
+
+    mistakes_dict = {'Ошибки': []}
+    for key, value in checking_dict.items():
+        base_hours_value = base_dict.get(key)
+        if value != base_hours_value:
+            mistakes_dict['Ошибки'].append(value)
+
+    print(f"Обнаружено: {int(len(mistakes_dict['Ошибки']))} несовпадений")
+
+    return 'Проверка выполнена'

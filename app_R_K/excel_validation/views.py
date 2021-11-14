@@ -1,8 +1,6 @@
-
 from openpyxl import load_workbook
 from flask import Blueprint, request
-
-from app.excel_validation.utilits import upd_to_float_dict_1, upd_to_float_dict_2
+from app_R_K.excel_validation.utilits import upd_to_float_dict_1, upd_to_float_dict_2, comparison_of_dictionaries
 from models import BasicTypeGraphic, db
 
 validation_bp = Blueprint('validation_bp', __name__)
@@ -20,11 +18,18 @@ def making_dict():
     correct_dictionary_base_file = upd_to_float_dict_1(dictionary)
     print(correct_dictionary_base_file)
     # добавление в базу
-    # main_base = BasicTypeGraphic(main_date=data, hours=hours)
-    # db.session.add(main_base)
-    # db.session.commit()
+    #TODO: Сделать проверку на существование в базе такой записи
+
+    for key, value in correct_dictionary_base_file.items():
+        main_base = BasicTypeGraphic(main_date=key, hours=value)
+        db.session.add(main_base)
+
+    db.session.commit()
 
     return {"ok": True}
+
+
+surname_list = []
 
 
 @validation_bp.route("/get_file_check", methods=["POST"])
@@ -32,6 +37,12 @@ def get_hours_list():
     file = request.files['file']
     wb = load_workbook(file)
     sheet = wb.get_sheet_by_name('Лист1')
+    basic_record_from_base = BasicTypeGraphic.query.with_entities(BasicTypeGraphic.main_date, BasicTypeGraphic.hours).all()
+
+    basic_record_from_base_dict = {}
+    for key, value in basic_record_from_base:
+        basic_record_from_base_dict[key] = float(value)
+
     hours_list = []
     for row in range(22, 632, 4):
         hours_dict = {}
@@ -47,15 +58,17 @@ def get_hours_list():
         hours_dict['dictionary'] = dictionary
         hours_dict['dictionary_2'] = dictionary_2
         hours_list.append(hours_dict)
-        hours_list = get_hours_list()
+        result_dict = {}
         for hours_dict in hours_list:
-            result_dict = {}
             upd_dict_1 = upd_to_float_dict_2(hours_dict['dictionary'])
             upd_dict_2 = upd_to_float_dict_2(hours_dict['dictionary_2'])
             result_dict.update(upd_dict_1)
             result_dict.update(upd_dict_2)
+        # Заносим ФИО в словарь
+        for row_s in range(21, 629, 4):
+            surname = sheet.cell(row=row_s + 4, column=2).value
+            surname_list.append(surname)
 
-        Basic_record_from_base = BasicTypeGraphic.query.all()
-        #Дальше функция с проверкой из utilits
+        print(comparison_of_dictionaries(basic_record_from_base_dict, result_dict))
 
-    return hours_list
+    return {'result': hours_list}
