@@ -4,12 +4,12 @@ db = SQLAlchemy()
 
 
 class BasicTypeGraphic(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    main_date = db.Column(db.String(32), nullable=True)
-    hours = db.Column(db.String(32), nullable=True)
+    main_date = db.Column(db.String(999), primary_key=True, nullable=True, unique=True)
+    hours = db.Column(db.String(999), nullable=True)
 
 
 class CheckedTypeGraphic(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.String(32), nullable=True)
-    hours = db.Column(db.String(32), nullable=True)
+    date = db.Column(db.String(999), primary_key=True, nullable=True)
+    hours = db.Column(db.String(999), nullable=True)
+
+# бновленные базы
