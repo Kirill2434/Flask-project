@@ -11,3 +11,5 @@ class BasicTypeGraphic(db.Model):
 class CheckedTypeGraphic(db.Model):
     date = db.Column(db.String(999), primary_key=True, nullable=True)
     hours = db.Column(db.String(999), nullable=True)
+
+# бновленные базы

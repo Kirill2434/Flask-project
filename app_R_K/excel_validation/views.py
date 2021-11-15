@@ -64,7 +64,7 @@ def get_hours_list():
             upd_dict_2 = upd_to_float_dict_2(hours_dict['dictionary_2'])
             result_dict.update(upd_dict_1)
             result_dict.update(upd_dict_2)
-        # Заносим ФИО в словарь
+
         for row_s in range(21, 629, 4):
             surname = sheet.cell(row=row_s + 4, column=2).value
             surname_list.append(surname)

@@ -1,5 +1,3 @@
-# from app_R_K.excel_validation.views import surname_list
-
 def upd_to_float_dict_1(dict_d):
     upd_dict_1 = {}
     for key, value in dict_d.items():
@@ -40,7 +38,7 @@ def upd_to_float_dict_2(dictionary1) -> object:
     return upd_dict
 
 
-# Сравниваем  словари
+
 def comparison_of_dictionaries(base_dict, checking_dict):
 
     mistakes_dict = {'Ошибки': []}

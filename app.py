@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 from flask import Flask
 from flask_migrate import Migrate
-
 from app_R_K.comerce_parser.views import parser_bp
 from app_R_K.excel_validation.views import validation_bp
 from models import db
