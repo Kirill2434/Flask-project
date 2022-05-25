@@ -38,7 +38,6 @@ def upd_to_float_dict_2(dictionary1) -> object:
     return upd_dict
 
 
-
 def comparison_of_dictionaries(base_dict, checking_dict):
 
     mistakes_dict = {'Ошибки': []}
